@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Message(BaseModel):
     role: Literal["user", "assistant", "system"]
     content: str
@@ -61,7 +62,9 @@ def _normalize_choices(raw_choices: Any) -> dict[str, str]:
 
         # Normalize key to uppercase letter (A, B, C, D...)
         # If key is "0", "1", etc., map to A, B...
-        normalized_key = chr(65 + int(key_str)) if key_str.isdigit() else key_str[0].upper()
+        normalized_key = (
+            chr(65 + int(key_str)) if key_str.isdigit() else key_str[0].upper()
+        )
 
         normalized[normalized_key] = _normalize_text(value)
     return normalized
@@ -116,7 +119,9 @@ def _normalize_history(message_list: list[Any]) -> list[Message]:
             if u:
                 normalized.append(
                     Message(
-                        role="user", content=str(u), timestamp=str(timestamp) if timestamp else None
+                        role="user",
+                        content=str(u),
+                        timestamp=str(timestamp) if timestamp else None,
                     )
                 )
             if a:
@@ -131,7 +136,9 @@ def _normalize_history(message_list: list[Any]) -> list[Message]:
             # Map arbitrary roles to standard ones if needed, currently assuming compliant
             normalized.append(
                 Message(
-                    role=role, content=str(content), timestamp=str(timestamp) if timestamp else None
+                    role=role,
+                    content=str(content),
+                    timestamp=str(timestamp) if timestamp else None,
                 )
             )
     return normalized
@@ -156,6 +163,8 @@ def main():
     count = 0
     with open(output_file, "w") as outfile:
         for json_file in glob.glob(str(source_dir / "*.json")):
+            if count >= 10:
+                break
             try:
                 with open(json_file) as f:
                     data = json.load(f)
@@ -172,13 +181,16 @@ def main():
                     history = _normalize_history(message_list)
 
                     # Construct plain text context for display/debugging
-                    context_lines = [f"{msg.role.capitalize()}: {msg.content}" for msg in history]
+                    context_lines = [
+                        f"{msg.role.capitalize()}: {msg.content}" for msg in history
+                    ]
                     history_text = "\n".join(context_lines)
 
                     out_record = MemBenchOutput(
                         case_id=f"{Path(json_file).stem}-{tid}",
                         question=question,
-                        ground_truth=expected_choice or _normalize_text(qa.get("ground_truth")),
+                        ground_truth=expected_choice
+                        or _normalize_text(qa.get("ground_truth")),
                         choices=choices,
                         history=history,
                         context_text=history_text,
@@ -188,6 +200,8 @@ def main():
 
                     outfile.write(out_record.model_dump_json() + "\n")
                     count += 1
+                    if count >= 10:
+                        break
 
             except Exception as e:
                 print(f"Error processing {json_file}: {e}", file=sys.stderr)

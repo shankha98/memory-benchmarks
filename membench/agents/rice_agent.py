@@ -194,6 +194,14 @@ def main():
                     }
                 )
 
+            with open("rice_agent_debug.log", "a") as f:
+                f.write(
+                    f"Inserting {len(documents)} documents for case {case.case_id}:\n"
+                )
+                for doc in documents:
+                    f.write(f" - {doc['text']}\n")
+                f.write("-" * 20 + "\n")
+
             batches = [
                 documents[offset : offset + insert_batch_size]
                 for offset in range(0, len(documents), insert_batch_size)
@@ -229,6 +237,17 @@ def main():
             search_results = main_client.search(
                 case.input, user_id=user_id, k=20, filter={"run_id": run_id}
             )
+            with open("rice_agent_debug.log", "a") as f:
+                f.write(f"Query: {case.input}\n")
+                f.write("Results:\n")
+                if search_results:
+                    for res in search_results:
+                        metadata = res.get("metadata", {})
+                        text = metadata.get("text", "NO_TEXT_IN_METADATA")
+                        f.write(f" - {text}\n")
+                else:
+                    f.write(" - No results found.\n")
+                f.write("-" * 20 + "\n")
 
             # Extract messages - need to re-fetch content since search only returns metadata
             retrieved_messages = []
