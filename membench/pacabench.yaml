@@ -24,7 +24,7 @@ agents:
 datasets:
   - name: "membench"
     source: "git:https://github.com/import-myself/Membench.git"
-    prepare: "python scripts/prepare_membench.py"
+    prepare: "uv run python scripts/prepare_membench.py"
     input_map:
       input: "question"
       expected: "ground_truth"
