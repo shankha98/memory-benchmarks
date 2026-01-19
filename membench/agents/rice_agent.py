@@ -69,7 +69,7 @@ def main():
 
     proxy_url = os.getenv("OPENAI_BASE_URL")
     api_key = os.getenv("OPENAI_API_KEY")
-    model = os.getenv("OPENAI_MODEL", "gpt-5-nano")
+    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
     rice_host = os.getenv("RICE_HOST", "api.ricedb-beta-m5xd9.ricedb.tryrice.com")
     rice_port = int(os.getenv("RICE_PORT", "80"))
