@@ -16,4 +16,4 @@ dependencies = [
 dev = ["pacabench>=0.0.2"]
 
 [tool.uv.sources]
-ricedb = { git = "https://github.com/rice-ai-hq/ricedb-python" }
+ricedb = { git = "https://github.com/rice-ai-hq/ricedb-python", rev = "2d76b954b630ddfa9644d03c04c83d14f6c5b366" }

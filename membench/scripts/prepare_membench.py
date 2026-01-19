@@ -6,7 +6,10 @@ from pathlib import Path
 from typing import Any, Literal
 
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 class Message(BaseModel):
     role: Literal["user", "assistant", "system"]

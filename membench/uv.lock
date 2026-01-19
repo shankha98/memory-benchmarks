@@ -276,6 +276,11 @@ dependencies = [
     { name = "ricedb" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "pacabench" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "grpcio", specifier = ">=1.76.0" },
@@ -283,8 +288,11 @@ requires-dist = [
     { name = "protobuf", specifier = ">=6.33.2" },
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "ricedb", git = "https://github.com/rice-ai-hq/ricedb-python" },
+    { name = "ricedb", git = "https://github.com/rice-ai-hq/ricedb-python?rev=2d76b954b630ddfa9644d03c04c83d14f6c5b366" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pacabench", specifier = ">=0.0.2" }]
 
 [[package]]
 name = "numpy"
@@ -364,6 +372,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/94/f4/4690ecb5d70023ce6bfcfeabfe717020f654bde59a775058ec6ac4692463/openai-2.15.0.tar.gz", hash = "sha256:42eb8cbb407d84770633f31bf727d4ffb4138711c670565a41663d9439174fba", size = 627383, upload-time = "2026-01-09T22:10:08.603Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/df/c306f7375d42bafb379934c2df4c2fa3964656c8c782bac75ee10c102818/openai-2.15.0-py3-none-any.whl", hash = "sha256:6ae23b932cd7230f7244e52954daa6602716d6b9bf235401a107af731baea6c3", size = 1067879, upload-time = "2026-01-09T22:10:06.446Z" },
+]
+
+[[package]]
+name = "pacabench"
+version = "0.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/3a/f7/6e21b42c4dd274dfc0967296ca9e6f0cfa3bb1998bda84f30ff12145a867/pacabench-0.0.2.tar.gz", hash = "sha256:fd8c3bd5937a631a8371dcbf3003cddca20795fdcc342775508df31ba2edc80a", size = 91531, upload-time = "2026-01-14T15:23:44.53Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/9f/4227442d39d81aa8d66013ed686dfb222b43dcdc52836997beab695e7e43/pacabench-0.0.2-py3-none-macosx_11_0_arm64.whl", hash = "sha256:0fc741d507f5cb6c3fe318d8efa910d89173d6ed4cb6776de458974c220c86dd", size = 9740166, upload-time = "2026-01-14T15:23:41.72Z" },
 ]
 
 [[package]]
@@ -494,7 +511,7 @@ wheels = [
 [[package]]
 name = "ricedb"
 version = "0.1.0"
-source = { git = "https://github.com/rice-ai-hq/ricedb-python#f95ea95e18c7e80d2008bb05fa0bd9f29ceb48d5" }
+source = { git = "https://github.com/rice-ai-hq/ricedb-python?rev=2d76b954b630ddfa9644d03c04c83d14f6c5b366#2d76b954b630ddfa9644d03c04c83d14f6c5b366" }
 dependencies = [
     { name = "numpy" },
     { name = "requests" },
