@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import uuid
 from queue import Empty, Queue
 from threading import Thread
 from typing import Literal
@@ -59,6 +60,8 @@ def main():
     # as "unset" so dotenv can populate them.
     if os.environ.get("RICE_PASSWORD", "") == "":
         os.environ.pop("RICE_PASSWORD", None)
+
+    run_id = str(uuid.uuid4())
 
     dotenv_path = os.getenv("DOTENV_PATH") or find_dotenv(usecwd=False)
     if dotenv_path:
@@ -179,7 +182,16 @@ def main():
             node_counter += len(case.history)
             for idx, msg in enumerate(case.history):
                 documents.append(
-                    {"id": start_node_id + idx, "text": msg.content, "metadata": {"role": msg.role, "index": idx}}
+                    {
+                        "id": start_node_id + idx,
+                        "text": msg.content,
+                        "metadata": {
+                            "role": msg.role,
+                            "index": idx,
+                            "run_id": run_id,
+                            "text": msg.content,
+                        },
+                    }
                 )
 
             batches = [
@@ -214,7 +226,9 @@ def main():
                     main_client.batch_insert(batch, user_id=user_id)
 
             # Search
-            search_results = main_client.search(case.input, user_id=user_id, k=20)
+            search_results = main_client.search(
+                case.input, user_id=user_id, k=20, filter={"run_id": run_id}
+            )
 
             # Extract messages - need to re-fetch content since search only returns metadata
             retrieved_messages = []
@@ -225,10 +239,15 @@ def main():
                         node_id = result.get("node_id")
                         role = metadata.get("role", "user")
                         index = metadata.get("index", 0)
-                        # Get the original text from the history based on index
-                        if 0 <= index < len(case.history):
+                        # Get text from metadata, fallback to history
+                        content = metadata.get("text")
+                        if not content and 0 <= index < len(case.history):
                             content = case.history[index].content
-                            retrieved_messages.append({"role": role, "content": content, "index": index})
+
+                        if content:
+                            retrieved_messages.append(
+                                {"role": role, "content": content, "index": index}
+                            )
 
             retrieved_messages.sort(key=lambda x: x.get("index", 0))
 
@@ -239,18 +258,27 @@ def main():
 
             user_prompt = f"{context_text}\nQuestion: {case.input}"
             if case.choices:
-                choices_text = "\n".join(f"{k}. {v}" for k, v in sorted(case.choices.items()))
+                choices_text = "\n".join(
+                    f"{k}. {v}" for k, v in sorted(case.choices.items())
+                )
                 user_prompt += f"\n\nChoices:\n{choices_text}\n\nRespond with only the choice letter (A, B, C, or D)."
 
             response = openai_client.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant. Use the provided conversation context to answer the question."},
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant. Use the provided conversation context to answer the question.",
+                    },
                     {"role": "user", "content": user_prompt},
                 ],
             )
             try:
-                print(json.dumps({"output": response.choices[0].message.content, "error": None}))
+                print(
+                    json.dumps(
+                        {"output": response.choices[0].message.content, "error": None}
+                    )
+                )
             except BrokenPipeError:
                 return
 
