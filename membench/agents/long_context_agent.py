@@ -3,6 +3,7 @@ import os
 import sys
 from typing import Literal
 
+from dotenv import find_dotenv, load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
@@ -20,6 +21,12 @@ class InputCase(BaseModel):
 
 
 def main():
+    if os.environ.get("OPENAI_API_KEY", "") == "":
+        os.environ.pop("OPENAI_API_KEY", None)
+
+    # Load .env file
+    load_dotenv(find_dotenv(usecwd=True))
+
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 

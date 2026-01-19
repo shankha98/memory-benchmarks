@@ -12,14 +12,9 @@ config:
 agents:
   - name: "long-context-baseline"
     command: "uv run python agents/long_context_agent.py"
-    env:
-      OPENAI_API_KEY: "${OPENAI_API_KEY}"
 
   - name: "rice"
     command: "uv run python agents/rice_agent.py"
-    env:
-      OPENAI_API_KEY: "${OPENAI_API_KEY}"
-      DOTENV_PATH: ".env"
 
 datasets:
   - name: "membench"
