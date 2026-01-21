@@ -15,3 +15,4 @@ wheels/
 membench/runs/
 runs/
 MemData/
+*.log
