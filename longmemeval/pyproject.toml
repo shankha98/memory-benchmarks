@@ -6,7 +6,12 @@ requires-python = ">=3.12"
 dependencies = [
     "openai>=1.0.0",
     "pydantic>=2.0.0",
+    "ricedb",
+    "python-dotenv>=1.2.1",
 ]
 
 [dependency-groups]
 dev = ["pacabench>=0.0.2"]
+
+[tool.uv.sources]
+ricedb = { git = "https://github.com/rice-ai-hq/ricedb-python", rev = "3c9b4fdea37348a339b44e8b17b8a089b2408d82" }

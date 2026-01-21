@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 from typing import Any, Literal
 
+from dotenv import find_dotenv, load_dotenv
 from openai import OpenAI
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
@@ -98,7 +99,9 @@ def build_messages(case: InputCase) -> list[dict[str, str]]:
 
     user_prompt = f"Question: {case.input}"
     if case.choices:
-        choices_text = "\n".join(f"{key}. {value}" for key, value in sorted(case.choices.items()))
+        choices_text = "\n".join(
+            f"{key}. {value}" for key, value in sorted(case.choices.items())
+        )
         user_prompt += (
             f"\n\nChoices:\n{choices_text}"
             "\n\nRespond with only the choice letter (A, B, C, or D)."
@@ -109,9 +112,14 @@ def build_messages(case: InputCase) -> list[dict[str, str]]:
 
 
 def main() -> None:
+    if os.environ.get("OPENAI_API_KEY", "") == "":
+        os.environ.pop("OPENAI_API_KEY", None)
+
+    load_dotenv(find_dotenv(usecwd=False))
+
     api_key = os.getenv("OPENAI_API_KEY")
     base_url = os.getenv("OPENAI_BASE_URL")
-    model = os.getenv("OPENAI_MODEL", "gpt-5-nano")
+    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
     client = OpenAI(api_key=api_key, base_url=base_url)
 
