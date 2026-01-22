@@ -163,8 +163,6 @@ def main():
     count = 0
     with open(output_file, "w") as outfile:
         for json_file in glob.glob(str(source_dir / "*.json")):
-            if count >= 10:
-                break
             try:
                 with open(json_file) as f:
                     data = json.load(f)
@@ -200,8 +198,6 @@ def main():
 
                     outfile.write(out_record.model_dump_json() + "\n")
                     count += 1
-                    if count >= 10:
-                        break
 
             except Exception as e:
                 print(f"Error processing {json_file}: {e}", file=sys.stderr)
